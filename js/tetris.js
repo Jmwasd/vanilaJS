@@ -1,3 +1,5 @@
+import BLOCKS from './bocks.js';
+
 //DOM
 
 const playground = document.querySelector('.playground > ul');
@@ -14,37 +16,8 @@ let duration = 5000;
 let downInterval;
 let tempMovingItem;
 
-const BLOCKS = {
-    tree: [
-        [
-            [2, 1],
-            [0, 1],
-            [1, 0],
-            [1, 1],
-        ],
-        [
-            [1, 2],
-            [0, 1],
-            [1, 0],
-            [1, 1],
-        ],
-        [
-            [2, 1],
-            [0, 1],
-            [1, 2],
-            [1, 1],
-        ],
-        [
-            [2, 1],
-            [1, 2],
-            [1, 0],
-            [1, 1],
-        ],
-    ],
-};
-
 const movingItem = {
-    type: 'tree',
+    type: 'bar',
     direction: 0,
     top: 0,
     left: 0,
@@ -112,7 +85,7 @@ function seizedBlock() {
 
 function generateNewBlock() {
     movingItem.top = 0;
-    movingItem.left = 3;
+    movingItem.left = 4;
     movingItem.direction = 0;
     tempMovingItem = { ...movingItem };
     renderBlocks();
