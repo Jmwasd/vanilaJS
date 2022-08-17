@@ -12,26 +12,33 @@ const GAME_COLS = 10;
 //variables
 
 const score = 0;
-let duration = 5000;
+let duration = 1000;
 let downInterval;
 let tempMovingItem;
 
 const movingItem = {
-    type: 'bar',
-    direction: 0,
+    type: '',
+    direction: 1,
     top: 0,
-    left: 0,
+    left: 4,
 };
 
 init();
 
 //functions
+function getRandomBlock() {
+    const blockKeyArray = Object.keys(BLOCKS);
+    const randomIndex = parseInt(Math.random() * blockKeyArray.length);
+    return blockKeyArray[randomIndex];
+}
+
 function init() {
+    movingItem.type = getRandomBlock();
     tempMovingItem = { ...movingItem };
     for (let i = 0; i < GAME_ROWS; i++) {
         prependNewLine();
     }
-    renderBlocks();
+    generateNewBlock();
 }
 
 function prependNewLine() {
@@ -84,6 +91,12 @@ function seizedBlock() {
 }
 
 function generateNewBlock() {
+    clearInterval(downInterval);
+    downInterval = setInterval(() => {
+        moveBlock('top', 1);
+    }, duration);
+
+    movingItem.type = getRandomBlock();
     movingItem.top = 0;
     movingItem.left = 4;
     movingItem.direction = 0;
@@ -110,6 +123,13 @@ function changeDiretion() {
     renderBlocks();
 }
 
+function dropBlock() {
+    clearInterval(downInterval);
+    downInterval = setInterval(() => {
+        moveBlock('top', 1);
+    }, 5);
+}
+
 //event handling
 
 document.addEventListener('keydown', (e) => {
@@ -125,6 +145,9 @@ document.addEventListener('keydown', (e) => {
             break;
         case 38:
             changeDiretion();
+            break;
+        case 32:
+            dropBlock();
             break;
         default:
             break;
