@@ -3,6 +3,9 @@ import BLOCKS from './bocks.js';
 //DOM
 
 const playground = document.querySelector('.playground > ul');
+const gameText = document.querySelector('.game-text');
+const scoreDisplay = document.querySelector('.score');
+const restartButton = document.querySelector('.game-text > button');
 
 // Setting
 
@@ -11,16 +14,16 @@ const GAME_COLS = 10;
 
 //variables
 
-const score = 0;
+let score = 0;
 let duration = 1000;
 let downInterval;
 let tempMovingItem;
 
 const movingItem = {
     type: '',
-    direction: 1,
+    direction: 0,
     top: 0,
-    left: 4,
+    left: 0,
 };
 
 init();
@@ -49,7 +52,7 @@ function prependNewLine() {
         ul.prepend(metrix);
     }
     li.prepend(ul);
-    playground.appendChild(li);
+    playground.prepend(li);
 }
 
 function renderBlocks(moveType = '') {
@@ -67,8 +70,12 @@ function renderBlocks(moveType = '') {
             target.classList.add(type, 'moving');
         } else {
             tempMovingItem = { ...movingItem };
+            if (moveType === 'retry') {
+                clearInterval(downInterval);
+                showGameoverText();
+            }
             setTimeout(() => {
-                renderBlocks();
+                renderBlocks('retry');
                 if (moveType === 'top') {
                     seizedBlock();
                 }
@@ -86,6 +93,25 @@ function seizedBlock() {
     movingBlocks.forEach((moving) => {
         moving.classList.remove('moving');
         moving.classList.add('seized');
+    });
+    checkMach();
+}
+
+function checkMach() {
+    const childNodes = playground.childNodes;
+    childNodes.forEach((child) => {
+        let matched = true;
+        child.childNodes[0].childNodes.forEach((li) => {
+            if (!li.classList.contains('seized')) {
+                matched = false;
+            }
+        });
+        if (matched) {
+            child.remove();
+            prependNewLine();
+            score++;
+            scoreDisplay.innerText = score;
+        }
     });
     generateNewBlock();
 }
@@ -130,6 +156,10 @@ function dropBlock() {
     }, 5);
 }
 
+function showGameoverText() {
+    gameText.style.display = 'flex';
+}
+
 //event handling
 
 document.addEventListener('keydown', (e) => {
@@ -152,4 +182,12 @@ document.addEventListener('keydown', (e) => {
         default:
             break;
     }
+});
+
+restartButton.addEventListener('click', () => {
+    playground.innerHTML = '';
+    gameText.style.display = 'none';
+    score = 0;
+    scoreDisplay.innerText = 0;
+    init();
 });

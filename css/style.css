@@ -8,6 +8,29 @@ body {
     overflow: hidden;
 }
 
+.game-text {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.7);
+    font-size: 50px;
+    color: #fff;
+}
+
+.game-text > button {
+    font-size: 20px;
+    background: salmon;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
 ul {
     list-style: none;
 }
