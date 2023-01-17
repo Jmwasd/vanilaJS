@@ -6,11 +6,14 @@ const playground = document.querySelector('.playground > ul');
 const gameText = document.querySelector('.game-text');
 const scoreDisplay = document.querySelector('.score');
 const restartButton = document.querySelector('.game-text > button');
+const nextBlocks = document.querySelector('.next-block > ul');
 
 // Setting
 
 const GAME_ROWS = 20;
 const GAME_COLS = 10;
+const NEXT_BLOCK_ROWS = 5;
+const NEXT_BLOCK_COLS = 5;
 
 //variables
 
@@ -41,6 +44,9 @@ function init() {
     for (let i = 0; i < GAME_ROWS; i++) {
         prependNewLine();
     }
+    for (let i = 0; i < NEXT_BLOCK_ROWS; i++) {
+        prependNextBlocks();
+    }
     generateNewBlock();
 }
 
@@ -53,6 +59,17 @@ function prependNewLine() {
     }
     li.prepend(ul);
     playground.prepend(li);
+}
+
+function prependNextBlocks() {
+    const li = document.createElement('li');
+    const ul = document.createElement('ul');
+    for (let j = 0; j < NEXT_BLOCK_COLS; j++) {
+        const metrix = document.createElement('li');
+        ul.prepend(metrix);
+    }
+    li.prepend(ul);
+    nextBlocks.prepend(li);
 }
 
 function renderBlocks(moveType = '') {
@@ -119,7 +136,7 @@ function checkMach() {
 function generateNewBlock() {
     clearInterval(downInterval);
     downInterval = setInterval(() => {
-        moveBlock('top', 1);
+        // moveBlock('top', 1);
     }, duration);
 
     movingItem.type = getRandomBlock();
@@ -144,8 +161,24 @@ function moveBlock(moveType, amount) {
 }
 
 function changeDiretion() {
-    const direction = tempMovingItem.direction;
-    direction === 3 ? (tempMovingItem.direction = 0) : (tempMovingItem.direction += 1);
+    const changDirection = tempMovingItem.direction;
+    changDirection === 3 ? (tempMovingItem.direction = 0) : (tempMovingItem.direction += 1);
+    const { type, top, direction, left } = tempMovingItem;
+    BLOCKS[type][direction].some((block) => {
+        const x = block[0] + left;
+        const y = block[1] + top;
+        const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : 'conflictTop';
+        if (target === 'conflictTop') {
+            tempMovingItem.top += 1;
+        } else if (!target) {
+            if (x >= 0) {
+                tempMovingItem.left -= 2;
+            } else {
+                tempMovingItem.left += 1;
+            }
+            return true;
+        }
+    });
     renderBlocks();
 }
 
