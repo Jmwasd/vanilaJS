@@ -12,7 +12,7 @@ const nextBlocks = document.querySelector('.next-block > ul');
 
 const GAME_ROWS = 20;
 const GAME_COLS = 10;
-const NEXT_BLOCK_ROWS = 5;
+const NEXT_BLOCK_ROWS = 4;
 const NEXT_BLOCK_COLS = 5;
 
 //variables
@@ -21,6 +21,7 @@ let score = 0;
 let duration = 1000;
 let downInterval;
 let tempMovingItem;
+let nextBlockTrriger = 0;
 
 const movingItem = {
     type: '',
@@ -29,17 +30,28 @@ const movingItem = {
     left: 0,
 };
 
+const nextBlockItem = {
+    type: '',
+    direction: 0,
+    top: 1,
+    left: 1,
+};
+
 init();
 
 //functions
 function getRandomBlock() {
     const blockKeyArray = Object.keys(BLOCKS);
-    const randomIndex = parseInt(Math.random() * blockKeyArray.length);
-    return blockKeyArray[randomIndex];
+    const firstRandomIndex = parseInt(Math.random() * blockKeyArray.length);
+    const secondRandomIndex = parseInt(Math.random() * blockKeyArray.length);
+    if (nextBlockTrriger === 0) {
+        return [blockKeyArray[firstRandomIndex], blockKeyArray[secondRandomIndex]];
+    } else {
+        return [nextBlockItem.type, blockKeyArray[firstRandomIndex]];
+    }
 }
 
 function init() {
-    movingItem.type = getRandomBlock();
     tempMovingItem = { ...movingItem };
     for (let i = 0; i < GAME_ROWS; i++) {
         prependNewLine();
@@ -105,6 +117,23 @@ function renderBlocks(moveType = '') {
     movingItem.direction = direction;
 }
 
+function renderNextBlock() {
+    const { type, direction, top, left } = nextBlockItem;
+    const movingBlocks = document.querySelectorAll('.next');
+    movingBlocks.forEach((movings) => {
+        const length = movings.classList.length;
+        for (let i = 0; i < length; i++) {
+            movings.classList.remove(movings.classList[i], 'next');
+        }
+    });
+    BLOCKS[type][direction].some((block) => {
+        const x = block[0] + left;
+        const y = block[1] + top;
+        const target = nextBlocks.childNodes[y] ? nextBlocks.childNodes[y].childNodes[0].childNodes[x] : null;
+        target.classList.add(type, 'next');
+    });
+}
+
 function seizedBlock() {
     const movingBlocks = document.querySelectorAll('.moving');
     movingBlocks.forEach((moving) => {
@@ -136,14 +165,23 @@ function checkMach() {
 function generateNewBlock() {
     clearInterval(downInterval);
     downInterval = setInterval(() => {
-        // moveBlock('top', 1);
+        moveBlock('top', 1);
     }, duration);
 
-    movingItem.type = getRandomBlock();
+    const itemTypes = getRandomBlock();
+
+    nextBlockItem.type = itemTypes[1];
+    movingItem.type = itemTypes[0];
     movingItem.top = 0;
     movingItem.left = 4;
     movingItem.direction = 0;
     tempMovingItem = { ...movingItem };
+
+    if (nextBlockTrriger !== 1) {
+        nextBlockTrriger++;
+    }
+
+    renderNextBlock();
     renderBlocks();
 }
 
