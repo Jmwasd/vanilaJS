@@ -5,6 +5,7 @@ import BLOCKS from './bocks.js';
 const playground = document.querySelector('.playground > ul');
 const gameText = document.querySelector('.game-text');
 const scoreDisplay = document.querySelector('.score');
+const levelDisplay = document.querySelector('.level');
 const restartButton = document.querySelector('.game-text > button');
 const nextBlocks = document.querySelector('.next-block > ul');
 
@@ -22,6 +23,7 @@ let duration = 1000;
 let downInterval;
 let tempMovingItem;
 let nextBlockTrriger = 0;
+let level = 1;
 
 const movingItem = {
     type: '',
@@ -163,6 +165,11 @@ function checkMach() {
 }
 
 function generateNewBlock() {
+    if (level * 8 < score && level <= 14) {
+        duration -= 70;
+        level++;
+        levelDisplay.innerHTML = level;
+    }
     clearInterval(downInterval);
     downInterval = setInterval(() => {
         moveBlock('top', 1);
@@ -257,8 +264,11 @@ document.addEventListener('keydown', (e) => {
 
 restartButton.addEventListener('click', () => {
     playground.innerHTML = '';
+    nextBlocks.innerHTML = '';
     gameText.style.display = 'none';
     score = 0;
+    level = 1;
     scoreDisplay.innerText = 0;
+    levelDisplay.innerText = 1;
     init();
 });
