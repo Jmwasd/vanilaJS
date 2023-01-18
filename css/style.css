@@ -41,6 +41,16 @@ ul {
     margin-bottom: 2rem;
 }
 
+.level-wrap {
+    margin-right: 20px;
+    font-size: 30px;
+}
+
+.level {
+    text-align: center;
+    font-size: 25px;
+}
+
 .playgorund-wrap {
     display: flex;
     justify-content: center;
